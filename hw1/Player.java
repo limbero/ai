@@ -1,9 +1,8 @@
 import java.util.*;
 
 public class Player {
-    static final int PLAYER_WHITE = 1,
-    PLAYER_RED = -1;
     GameState bestState;
+    boolean weAreRed;
     /**
     * Performs a move
     *
@@ -30,7 +29,12 @@ public class Player {
 
         int alpha = Integer.MIN_VALUE;
         int beta = Integer.MAX_VALUE;
-        negaMax(pState, 15, PLAYER_WHITE, alpha, beta);
+        if (pState.getNextPlayer() == Constants.CELL_RED) {
+            weAreRed = true;
+        } else {
+            weAreRed = false;
+        }
+        negaMax(pState, 10, pState.getNextPlayer(), alpha, beta);
         return bestState;
     }
 
@@ -49,19 +53,25 @@ public class Player {
             bestScore = val > bestScore ? val : bestScore;
             bestState = lNextState;
 
-            alpha = bestScore > alpha ? bestScore : alpha;
+            alpha = val > alpha ? val : alpha;
             if (beta <= alpha)
                 break;
         }
         return bestScore;
     }
 
-    public int evaluateBoard(final GameState pState) {
+    public int evaluateBoard(GameState pState) {
+        if(weAreRed)
+            pState = pState.reversed();
+
+        int king_multiplier = 2;
 
         if (pState.isRedWin())
-        return Integer.MIN_VALUE;
+            return Integer.MIN_VALUE;
         else if (pState.isWhiteWin())
-        return Integer.MAX_VALUE;
+            return Integer.MAX_VALUE;
+        else if (pState.isDraw())
+            return 0;
 
         int whitescore = 0, redscore = 0;
         for (int i=0; i < 32; i++) {
@@ -70,13 +80,13 @@ public class Player {
             if (0 != (piece & Constants.CELL_WHITE)) {
                 int tempscore = 1;
                 if (0 != (piece & Constants.CELL_KING)) {
-                    tempscore *= 5;
+                    tempscore *= king_multiplier;
                 }
                 whitescore += tempscore;
             } else if (0 != (piece & Constants.CELL_RED)) {
                 int tempscore = 1;
                 if (0 != (piece & Constants.CELL_KING)) {
-                    tempscore *= 5;
+                    tempscore *= king_multiplier;
                 }
                 redscore += tempscore;
             }
