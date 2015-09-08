@@ -34,13 +34,13 @@ public class Player {
         } else {
             weAreRed = false;
         }
-        negaMax(pState, 10, pState.getNextPlayer(), alpha, beta);
+        negaMax(pState, 10, 1, alpha, beta);
         return bestState;
     }
 
     public int negaMax(final GameState pState, int depth, int color, int alpha, int beta) {
         if (depth == 0 || pState.isEOG())
-        return color * evaluateBoard(pState);
+            return color * evaluateBoard(pState);
 
         Vector<GameState> lNextStates = new Vector<GameState>();
         pState.findPossibleMoves(lNextStates);
@@ -61,7 +61,7 @@ public class Player {
     }
 
     public int evaluateBoard(GameState pState) {
-        if(weAreRed)
+        if (weAreRed && pState.getNextPlayer() == Constants.CELL_RED)
             pState = pState.reversed();
 
         int king_multiplier = 2;
