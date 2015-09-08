@@ -51,7 +51,7 @@ public class Sokoban {
 							player_y = i;
 							break;
 						case '+':
-							System.out.println(" ");
+							System.out.println("");
 							return;
 					}
 				}
@@ -70,7 +70,6 @@ public class Sokoban {
 		q.add(squares.get(player_y).get(player_x));
 		qx.add(player_x);
 		qy.add(player_y);
-		path.get(player_y).set(player_x, "");
 
 		int cur, cur_x, cur_y;
 		while(q.peek() != null) {
