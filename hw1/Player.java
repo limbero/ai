@@ -34,64 +34,102 @@ public class Player {
         } else {
             weAreRed = false;
         }
-        negaMax(pState, 10, 1, alpha, beta);
+
+        miniMax(pState, 9, true, alpha, beta);
         return bestState;
     }
 
-    public int negaMax(final GameState pState, int depth, int color, int alpha, int beta) {
+    public int miniMax(final GameState pState, int depth, boolean maximizingPlayer, int alpha, int beta) {
         if (depth == 0 || pState.isEOG())
-            return color * evaluateBoard(pState);
+            return evaluateBoard(pState);
 
         Vector<GameState> lNextStates = new Vector<GameState>();
         pState.findPossibleMoves(lNextStates);
+        GameState bestChild = lNextStates.get(0);
 
-        int bestScore = Integer.MIN_VALUE;
-        bestState = lNextStates.get(0);
+        if (maximizingPlayer) {
+            int bestScore = Integer.MIN_VALUE;
 
-        for (GameState lNextState : lNextStates) {
-            int val = -negaMax(lNextState, depth-1, -color, -beta, -alpha);
-            bestScore = val > bestScore ? val : bestScore;
-            bestState = lNextState;
+            for (GameState lNextState : lNextStates) {
+                int score = miniMax(lNextState, depth-1, false, alpha, beta);
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestChild = lNextState;
+                }
 
-            alpha = val > alpha ? val : alpha;
-            if (beta <= alpha)
-                break;
+                alpha = score > alpha ? score : alpha;
+                if (beta <= alpha)
+                    break;
+            }
+            bestState = bestChild;
+            return bestScore;
         }
-        return bestScore;
+        else {
+             int bestScore = Integer.MAX_VALUE;
+             for (GameState lNextState : lNextStates) {
+                int score = miniMax(lNextState, depth-1, true, alpha, beta);
+                if (score < bestScore) {
+                    bestScore = score;
+                    bestChild = lNextState;
+                }
+
+                beta = score < beta ? score : beta;
+                if (beta <= alpha)
+                    break;
+            }
+            bestState = bestChild;
+            return bestScore;
+        }
     }
 
     public int evaluateBoard(GameState pState) {
-        if (weAreRed && pState.getNextPlayer() == Constants.CELL_RED)
-            pState = pState.reversed();
+        int king_value = 5;
 
-        int king_multiplier = 2;
-
-        if (pState.isRedWin())
-            return Integer.MIN_VALUE;
-        else if (pState.isWhiteWin())
-            return Integer.MAX_VALUE;
-        else if (pState.isDraw())
-            return 0;
-
-        int whitescore = 0, redscore = 0;
-        for (int i=0; i < 32; i++) {
-            int piece = pState.get(i);
-
-            if (0 != (piece & Constants.CELL_WHITE)) {
-                int tempscore = 1;
-                if (0 != (piece & Constants.CELL_KING)) {
-                    tempscore *= king_multiplier;
-                }
-                whitescore += tempscore;
-            } else if (0 != (piece & Constants.CELL_RED)) {
-                int tempscore = 1;
-                if (0 != (piece & Constants.CELL_KING)) {
-                    tempscore *= king_multiplier;
-                }
-                redscore += tempscore;
-            }
+        if (weAreRed) {
+            if (pState.isRedWin())
+                return Integer.MAX_VALUE;
+            else if (pState.isWhiteWin())
+                return Integer.MIN_VALUE;
+        } else {
+            if (pState.isRedWin())
+                return Integer.MIN_VALUE;
+            else if (pState.isWhiteWin())
+                return Integer.MAX_VALUE;
         }
 
-        return whitescore - redscore;
+        int score = 0;
+        for (int i = 0; i < 32; i++) {
+            int piece = pState.get(i);
+
+            if (weAreRed) {
+                if (0 != (piece & Constants.CELL_WHITE)) {
+                    score -= 1;
+                    if (0 != (piece & Constants.CELL_KING)) {
+                        score -= king_value;
+                    }
+
+                } else if (0 != (piece & Constants.CELL_RED)) {
+                    score += 1;
+                    if (0 != (piece & Constants.CELL_KING)) {
+                        score += king_value;
+                    }
+                }
+            } else {
+                if (0 != (piece & Constants.CELL_WHITE)) {
+                    score += 1;
+                    if (0 != (piece & Constants.CELL_KING)) {
+                        score += king_value;
+                    }
+
+                } else if (0 != (piece & Constants.CELL_RED)) {
+                    score -= 1;
+                    if (0 != (piece & Constants.CELL_KING)) {
+                        score -= king_value;
+                    }
+                }
+            }
+         }
+
+        return score;
     }
 }
