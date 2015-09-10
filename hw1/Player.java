@@ -1,7 +1,7 @@
 import java.util.*;
 
 public class Player {
-    GameState bestState;
+
     boolean weAreRed;
     /**
     * Performs a move
@@ -35,7 +35,16 @@ public class Player {
             weAreRed = false;
         }
 
-        miniMax(pState, 9, true, alpha, beta);
+        GameState bestState = lNextStates.get(0);
+        int bestScore = Integer.MIN_VALUE;
+
+        for (GameState state : lNextStates){
+            int score = miniMax(state, 8, false, alpha, beta);
+            if (score > bestScore){
+                bestScore = score;
+                bestState = state;
+            }
+        }
         return bestState;
     }
 
@@ -45,7 +54,6 @@ public class Player {
 
         Vector<GameState> lNextStates = new Vector<GameState>();
         pState.findPossibleMoves(lNextStates);
-        GameState bestChild = lNextStates.get(0);
 
         if (maximizingPlayer) {
             int bestScore = Integer.MIN_VALUE;
@@ -54,14 +62,12 @@ public class Player {
                 int score = miniMax(lNextState, depth-1, false, alpha, beta);
                 if (score > bestScore) {
                     bestScore = score;
-                    bestChild = lNextState;
                 }
 
                 alpha = score > alpha ? score : alpha;
                 if (beta <= alpha)
                     break;
             }
-            bestState = bestChild;
             return bestScore;
         }
         else {
@@ -70,14 +76,12 @@ public class Player {
                 int score = miniMax(lNextState, depth-1, true, alpha, beta);
                 if (score < bestScore) {
                     bestScore = score;
-                    bestChild = lNextState;
                 }
 
                 beta = score < beta ? score : beta;
                 if (beta <= alpha)
                     break;
             }
-            bestState = bestChild;
             return bestScore;
         }
     }
