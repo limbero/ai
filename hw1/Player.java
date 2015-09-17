@@ -50,7 +50,7 @@ public class Player {
 
     public int miniMax(final GameState pState, int depth, boolean maximizingPlayer, int alpha, int beta) {
         if (depth == 0 || pState.isEOG())
-            return evaluateBoard(pState);
+            return evaluateBoard(pState, depth);
 
         Vector<GameState> lNextStates = new Vector<GameState>();
         pState.findPossibleMoves(lNextStates);
@@ -80,19 +80,19 @@ public class Player {
         }
     }
 
-    public int evaluateBoard(GameState pState) {
+    public int evaluateBoard(GameState pState, int depth) {
         int king_value = 5;
 
         if (weAreRed) {
             if (pState.isRedWin())
-                return Integer.MAX_VALUE;
+                return 10000*depth;
             else if (pState.isWhiteWin())
-                return Integer.MIN_VALUE;
+                return -10000*depth;
         } else {
             if (pState.isRedWin())
-                return Integer.MIN_VALUE;
+                return -10000*depth;
             else if (pState.isWhiteWin())
-                return Integer.MAX_VALUE;
+                return 10000*depth;
         }
 
         int score = 0;
