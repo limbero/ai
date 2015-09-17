@@ -60,10 +60,7 @@ public class Player {
 
             for (GameState lNextState : lNextStates) {
                 int score = miniMax(lNextState, depth-1, false, alpha, beta);
-                if (score > bestScore) {
-                    bestScore = score;
-                }
-
+                bestScore = score > bestScore ? score : bestScore;
                 alpha = score > alpha ? score : alpha;
                 if (beta <= alpha)
                     break;
@@ -74,10 +71,7 @@ public class Player {
              int bestScore = Integer.MAX_VALUE;
              for (GameState lNextState : lNextStates) {
                 int score = miniMax(lNextState, depth-1, true, alpha, beta);
-                if (score < bestScore) {
-                    bestScore = score;
-                }
-
+                bestScore = score < bestScore ? score : bestScore;
                 beta = score < beta ? score : beta;
                 if (beta <= alpha)
                     break;
