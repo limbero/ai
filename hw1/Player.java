@@ -39,10 +39,13 @@ public class Player {
         int bestScore = Integer.MIN_VALUE;
 
         for (GameState state : lNextStates){
-            int score = miniMax(state, 8, false, alpha, beta);
+            int score = miniMax(state, 10, false, alpha, beta);
             if (score > bestScore){
                 bestScore = score;
                 bestState = state;
+            }
+            if (pDue.timeUntil() < 22000000) {
+                return bestState;
             }
         }
         return bestState;
