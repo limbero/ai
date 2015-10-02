@@ -1,17 +1,17 @@
 /**
  * Represents a HMM.
  *
- * Much of the terminology is borrowed from a very pedagogic paper by Rabiner 
+ * Much of the terminology is borrowed from a very pedagogic paper by Rabiner
  * and Juang: http://www.cs.ubc.ca/~murphyk/Bayes/rabiner.pdf
  *
  * We recommend that you read the article as an introduction to HMMs.
  */
 public class HMM {
   static final int maxIters = 30; // Max iterations when estimating a new model.
-  
+
   final int numberOfStates; // The number of states in the HMM.
   final int numberOfEmissions; // The number of emissions in the HMM.
-  
+
   double[][] A; // The transition matrix of the HMM.
   double[][] B; // The emission matrix of the HMM.
   double[] pi; // The initial state distribution of the HMM.
@@ -26,21 +26,39 @@ public class HMM {
     this.A = new double[numberOfStates][numberOfStates];
     this.B = new double[numberOfStates][numberOfEmissions];
     this.pi = new double[numberOfStates];
-    
+
     for (int i = 0; i < numberOfStates; ++i) {
-      for (int j = 0; j < numberOfStates; ++j) {      
-        this.A[i][j] = 0;
+      double sum = 0;
+      for (int j = 0; j < numberOfStates; ++j) {
+        double chance = Math.random()+1;
+        this.A[i][j] = chance;
+        sum += chance;
+      }
+      for (int j = 0; j < numberOfStates; ++j) {
+        this.A[i][j] /= sum;
       }
     }
-    
+
     for (int i = 0; i < numberOfStates; ++i) {
+      double sum = 0;
       for (int j = 0; j < numberOfEmissions; ++j) {
-        this.B[i][j] = 0;
+        double chance = Math.random()+1;
+        this.B[i][j] = chance;
+        sum += chance;
+      }
+      for (int j = 0; j < numberOfEmissions; ++j) {
+        this.B[i][j] /= sum;
       }
     }
-    
+
+    double sum = 0;
     for (int i = 0; i < numberOfStates; ++i) {
-      this.pi[i] = 0;
+      double chance = Math.random()+1;
+      this.pi[i] = chance;
+      sum += chance;
+    }
+    for (int i = 0; i < numberOfStates; ++i) {
+      this.pi[i] /= sum;
     }
   }
 
@@ -67,14 +85,14 @@ public class HMM {
       this.pi[i] = pi[i];
     }
   }
-  
+
   /**
-   * Estimates the probability distribution of the next emission, given the 
+   * Estimates the probability distribution of the next emission, given the
    * current state probability distribution.
-   * 
+   *
    * Note that this method solves the preparatory exercise HMM1.
-   * 
-   * @param currentStateProbabilityDistribution the current state probability 
+   *
+   * @param currentStateProbabilityDistribution the current state probability
    *        distribution
    */
   public double[] estimateProbabilityDistributionOfNextEmission(
@@ -83,7 +101,7 @@ public class HMM {
     for(int i = 0; i < numberOfStates; i++){
       for(int j = 0; j < numberOfStates; j++){
         for(int k = 0; k < numberOfEmissions; k++){
-          probabilityOfMoves[k] += 
+          probabilityOfMoves[k] +=
               currentStateProbabilityDistribution[j]*A[j][i]*B[i][k];
         }
       }
@@ -94,9 +112,9 @@ public class HMM {
   /**
    * Estimates the probability of a sequence of observed emissions, assuming
    * this HMM.
-   * 
+   *
    * Note that this method solves the preparatory exercise HMM2.
-   * 
+   *
    * @param O the sequence of observed emissions
    */
   public double estimateProbabilityOfEmissionSequence(int[] O){
@@ -106,7 +124,7 @@ public class HMM {
     for (int i = 0; i < numberOfStates; ++i) {
       alpha[0][i]=pi[i]*B[i][O[0]];
     }
-    
+
     for (int t = 1; t < O.length; ++t) {
       for (int i = 0; i < numberOfStates; ++i) {
         for (int j = 0; j < numberOfStates; ++j) {
@@ -114,32 +132,32 @@ public class HMM {
         }
       }
     }
-   
+
     for (int i = 0; i < numberOfStates; ++i) {
       probability += alpha[(O.length-1)][i];
     }
     return probability;
   }
-  
+
   /**
    * Estimates the hidden states from which a sequence of emissions were
    * observed.
-   * 
+   *
    * Note that this method solves the preparatory exercise HMM3.
-   * 
+   *
    * @param O the sequence of observed emissions
    */
   public int[] estimateStateSequence(int[] O){
-    
+
     double[][] alpha = new double[O.length][numberOfStates];
     int[][] path = new int[O.length][numberOfStates];
     int[] finalPath = new int[O.length];
     double maxProbability;
-    
+
     for (int i = 0; i < numberOfStates; ++i) {
       alpha[0][i]=pi[i]*B[i][O[0]];
     }
-    
+
     for (int t = 1; t < O.length; ++t) {
       for (int i = 0; i < numberOfStates; ++i) {
         maxProbability = 0.0;
@@ -170,13 +188,13 @@ public class HMM {
 
   /**
    * Re-estimates this HMM from a sequence of observed emissions.
-   * 
+   *
    * Note that this method uses A, B and pi.
    * Successful results are NOT guaranteed if these have improper
    * values considering the sequence of observations O!
    *
    * Note that this method solves the preparatory exercise HMM4.
-   * 
+   *
    * @param O the sequence of observed emissions
    */
   public void estimateModel(int O[]){
@@ -203,7 +221,7 @@ public class HMM {
         alpha[0][i]=pi[i]*B[i][O[0]];
         C[0] += alpha[0][i];
       }
-      
+
       if (C[0] != 0){
         C[0] = 1.0/C[0];
       }
@@ -221,21 +239,21 @@ public class HMM {
           alpha[t][i]=alpha[t][i]*B[i][O[t]];
           C[t] += alpha[t][i];
         }
-        
+
         if (C[t] != 0){
           C[t] = 1.0/C[t];
         }
         for (int i = 0; i < numberOfStates; ++i) {
           alpha[t][i]=C[t]*alpha[t][i];
-        } 
+        }
       }
-      
+
       /* Computation of beta */
-        
+
       for (int i = 0; i < numberOfStates; ++i) {
         beta[(O.length-1)][i] = C[O.length-1];
       }
- 
+
       for (int t = O.length-2; t >= 0; --t){
         for (int i = 0; i < numberOfStates; ++i) {
           beta[t][i] = 0;
@@ -247,7 +265,7 @@ public class HMM {
       }
 
       /* Computation of gamma and xi */
-      
+
       for (int t = 0; t < O.length-1; ++t) {
         denom = 0;
         for (int i = 0; i < numberOfStates; ++i) {
@@ -279,14 +297,14 @@ public class HMM {
         gamma[O.length-1][i] = 0.0;
         gamma[O.length-1][i] += (alpha[O.length-1][i]*beta[O.length-1][i])/denom;
       }
-      
+
       /* Re-estimate A,B and pi */
-      
+
       //Pi
       for (int i = 0; i < numberOfStates; ++i) {
         pi[i] = gamma[0][i];
       }
-      
+
       //A
       for (int i = 0; i < numberOfStates; ++i) {
         for (int j = 0; j < numberOfStates; ++j) {
@@ -301,7 +319,7 @@ public class HMM {
           } else {
             A[i][j] = 0;
           }
-            
+
         }
       }
 
@@ -323,9 +341,9 @@ public class HMM {
           }
         }
       }
-      
+
       /* Compute log probability for model generating observed sequence */
-      
+
       logProb = 0.0;
       for (int t = 0; t < C.length; ++t) {
         if (C[t] != 0){
@@ -344,7 +362,7 @@ public class HMM {
 
   /**
    * Copies a HMM onto this one.
-   * 
+   *
    * @param hmm the HMM you are going to copy to this one.
    */
   public void copyHMM(HMM hmm){
@@ -360,10 +378,10 @@ public class HMM {
       }
     }
   }
-  
+
   /**
    * Divides all the entries of A, B and pi by a divisor.
-   * 
+   *
    * @param divisor the divisor
    */
   public void divide(int divisor) {
@@ -381,10 +399,10 @@ public class HMM {
       pi[i] = pi[i] / divisor;
     }
 }
-  
+
   /**
    * Multiplies all the entries of A, B and pi with a factor.
-   * 
+   *
    * @param factor the factor
    */
   public void multiply(int factor) {
@@ -402,11 +420,11 @@ public class HMM {
       pi[i] = pi[i] * factor;
     }
   }
-  
+
   /**
    * Adds all the entries of A, B and pi of a HMM to the corresponding entries
    * of this HMM.
-   * 
+   *
    * @param hmm the HMM you want to add entrywise to this one.
    */
   public void add(HMM hmm){
@@ -416,12 +434,12 @@ public class HMM {
       }
       pi[i] += hmm.pi[i];
     }
-    
+
     for (int i = 0; i < numberOfStates; ++i){
       for (int j = 0; j < numberOfEmissions; ++j){
         B[i][j] += hmm.B[i][j];
       }
     }
   }
-  
+
 }
