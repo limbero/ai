@@ -25,8 +25,41 @@ class Player {
          * This skeleton never shoots.
          */
 
+        int numberOfBirds = pState.getNumBirds();
+        int bestBird = -1;
+        int bestBirdDirection;
+        double bestBirdProbability = Math.log(0.5);
+
+        for(int i = 0; i < numberOfBirds; i++) {
+            Bird bird = pState.getBird(i);
+            if(bird.isDead()) {
+                continue;
+            }
+
+            int[] observations = new int[bird.getSeqLength()];
+            for(int j = 0; j < observations.length; j++) {
+                observations[j] = bird.getObservation(j);
+            }
+
+            HMM hmm = new HMM(3, 3);
+            hmm.estimateModel(observations);
+            double[] probabilitiesOfMoves = hmm.estimateProbabilityDistributionOfNextEmission(hmm.pi);
+
+            for(int j = 0; j < probabilitiesOfMoves.length; j++) {
+                if(probabilitiesOfMoves[j] > bestBirdProbability) {
+                    bestBird = i;
+                    bestBirdDirection = j + 3;
+                    bestBirdProbability = probabilitiesOfMoves[j];
+                }
+            }
+        }
+
         // This line chooses not to shoot.
-        return cDontShoot;
+        if(bestBird == -1) {
+            return cDontShoot;
+        } else {
+            return Action(bestBird, bestBirdDirection);
+        }
 
         // This line would predict that bird 0 will move right and shoot at it.
         // return Action(0, MOVE_RIGHT);
