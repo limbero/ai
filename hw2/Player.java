@@ -27,7 +27,7 @@ class Player {
 
         int numberOfBirds = pState.getNumBirds();
         int bestBird = -1;
-        int bestBirdDirection;
+        int bestBirdDirection = -1;
         double bestBirdProbability = Math.log(0.5);
 
         for(int i = 0; i < numberOfBirds; i++) {
@@ -58,7 +58,7 @@ class Player {
         if(bestBird == -1) {
             return cDontShoot;
         } else {
-            return Action(bestBird, bestBirdDirection);
+            return new Action(bestBird, bestBirdDirection);
         }
 
         // This line would predict that bird 0 will move right and shoot at it.
