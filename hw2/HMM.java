@@ -358,6 +358,13 @@ public class HMM {
         finished = true;
       }
     }
+
+    System.err.println("Matrix A:");
+    printMatrix(A);
+    System.err.println("Matrix B:");
+    printMatrix(B);
+    System.err.println("Pi:");
+    printVector(pi);
   }
 
   /**
@@ -440,6 +447,22 @@ public class HMM {
         B[i][j] += hmm.B[i][j];
       }
     }
+  }
+
+  public void printMatrix(double[][] matrix) {
+    for (int i = 0; i < matrix.length; i++) {
+      for (int j = 0; j < matrix[i].length; j++) {
+        System.err.print(matrix[i][j] + " ");
+      }
+      System.err.println();
+    }
+  }
+
+  public void printVector(double[] vector) {
+    for (int i = 0; i < vector.length; i++) {
+      System.err.print(vector[i] + " ");
+    }
+    System.err.println();
   }
 
 }

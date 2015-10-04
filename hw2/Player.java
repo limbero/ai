@@ -46,7 +46,7 @@ class Player {
             double[] probabilitiesOfMoves = hmm.estimateProbabilityDistributionOfNextEmission(hmm.pi);
 
             for(int j = 0; j < probabilitiesOfMoves.length; j++) {
-                System.err.println(probabilitiesOfMoves[j]);
+                // System.err.println(probabilitiesOfMoves[j]);
                 if(probabilitiesOfMoves[j] > bestBirdProbability) {
                     bestBird = i;
                     bestBirdDirection = j + 3;
