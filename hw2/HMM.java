@@ -218,7 +218,7 @@ public class HMM {
 
       C[0]=0.0;
       for (int i = 0; i < numberOfStates; ++i) {
-        alpha[0][i]=pi[i]*B[i][O[0]];
+        alpha[0][i]=pi[i]*B[i][O[0]-3];
         C[0] += alpha[0][i];
       }
 
@@ -236,7 +236,7 @@ public class HMM {
           for (int j = 0; j < numberOfStates; ++j) {
             alpha[t][i] += alpha[(t-1)][j]*A[j][i];
           }
-          alpha[t][i]=alpha[t][i]*B[i][O[t]];
+          alpha[t][i]=alpha[t][i]*B[i][O[t]-3];
           C[t] += alpha[t][i];
         }
 
@@ -258,7 +258,7 @@ public class HMM {
         for (int i = 0; i < numberOfStates; ++i) {
           beta[t][i] = 0;
           for (int j = 0; j < numberOfStates; ++j) {
-            beta[t][i] += A[i][j]*B[j][O[t+1]]*beta[t+1][j];
+            beta[t][i] += A[i][j]*B[j][O[t+1]-3]*beta[t+1][j];
           }
           beta[t][i] = C[t]*beta[t][i];
         }
@@ -271,14 +271,14 @@ public class HMM {
         for (int i = 0; i < numberOfStates; ++i) {
           for (int j = 0; j < numberOfStates; ++j){
             /* Eq. 37 in Rabiner89 */
-            denom += alpha[t][i]*A[i][j]*B[j][O[t+1]]*beta[(t+1)][j];
+            denom += alpha[t][i]*A[i][j]*B[j][O[t+1]-3]*beta[(t+1)][j];
           }
         }
         for (int i = 0; i < numberOfStates; ++i) {
           gamma[t][i] = 0.0;
           for (int j = 0; j < numberOfStates; ++j){
             if (denom != 0){
-              xi[t][i][j] = (alpha[t][i]*A[i][j]*B[j][O[t+1]]*beta[(t+1)][j])/denom;
+              xi[t][i][j] = (alpha[t][i]*A[i][j]*B[j][O[t+1]-3]*beta[(t+1)][j])/denom;
             } else {
               xi[t][i][j] = 0.0;
             }
