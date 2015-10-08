@@ -345,7 +345,7 @@ public class HMM {
                     numer = 0.0;
                     denom = 0.0;
                     for (int t = 0; t < O.length; ++t) {
-                        if (j == O[t]){
+                        if (j == O[t]-3){
                             numer += gamma[t][i];
                         }
                         denom += gamma[t][i];
