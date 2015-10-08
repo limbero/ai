@@ -7,7 +7,7 @@
 * We recommend that you read the article as an introduction to HMMs.
 */
 public class HMM {
-    static final int maxIters = 30; // Max iterations when estimating a new model.
+    static final int maxIters = 10; // Max iterations when estimating a new model.
 
     final int numberOfStates; // The number of states in the HMM.
     final int numberOfEmissions; // The number of emissions in the HMM.
@@ -30,7 +30,7 @@ public class HMM {
         for (int i = 0; i < numberOfStates; ++i) {
             double sum = 0;
             for (int j = 0; j < numberOfStates; ++j) {
-                double chance = Math.random()+10;
+                double chance = Math.random()+5;
                 this.A[i][j] = chance;
                 sum += chance;
             }
@@ -42,7 +42,7 @@ public class HMM {
         for (int i = 0; i < numberOfStates; ++i) {
             double sum = 0;
             for (int j = 0; j < numberOfEmissions; ++j) {
-                double chance = Math.random()+10;
+                double chance = Math.random()+5;
                 this.B[i][j] = chance;
                 sum += chance;
             }
@@ -53,20 +53,13 @@ public class HMM {
 
         double sum = 0;
         for (int i = 0; i < numberOfStates; ++i) {
-            double chance = Math.random()+10;
+            double chance = Math.random()+5;
             this.pi[i] = chance;
             sum += chance;
         }
         for (int i = 0; i < numberOfStates; ++i) {
             this.pi[i] /= sum;
         }
-
-        System.err.println("Matrix A:");
-        printMatrix(A);
-        System.err.println("Matrix B:");
-        printMatrix(B);
-        System.err.println("Pi:");
-        printVector(pi);
     }
 
     public HMM(double[][] A, double[][] B, double[] pi){
@@ -220,15 +213,6 @@ public class HMM {
         double logProb;
         boolean finished = false;
 
-        System.err.println("Matrix A:");
-        printMatrix(A);
-        System.err.println("Matrix B:");
-        printMatrix(B);
-        System.err.println("Pi:");
-        printVector(pi);
-        System.err.println("O:");
-        printegerVector(O);
-
         while(!finished && iters < maxIters){
             /* Computation of alpha */
 
@@ -374,13 +358,6 @@ public class HMM {
                 finished = true;
             }
         }
-
-        System.err.println("Matrix A:");
-        printMatrix(A);
-        System.err.println("Matrix B:");
-        printMatrix(B);
-        System.err.println("Pi:");
-        printVector(pi);
     }
 
     /**

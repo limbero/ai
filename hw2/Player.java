@@ -28,7 +28,7 @@ class Player {
         int numberOfBirds = pState.getNumBirds();
         int bestBird = -1;
         int bestBirdDirection = -1;
-        double bestBirdProbability = Math.log(0.5);
+        double bestBirdProbability = 0.7;
 
         for(int i = 0; i < numberOfBirds; i++) {
             Bird bird = pState.getBird(i);
@@ -36,9 +36,18 @@ class Player {
                 continue;
             }
 
-            int[] observations = new int[bird.getSeqLength()];
-            for(int j = 0; j < observations.length; j++) {
-                observations[j] = bird.getObservation(j);
+            int finsiffra = 10;
+
+            int[] observations = new int[finsiffra];
+            int numObservations = bird.getSeqLength();
+            if(numObservations < finsiffra) {
+                return cDontShoot;
+            }
+
+            int k = 0;
+            for(int j = numObservations-finsiffra; j < numObservations; j++) {
+                observations[k] = bird.getObservation(j);
+                k++;
             }
 
             HMM hmm = new HMM(3, 3);
@@ -46,7 +55,6 @@ class Player {
             double[] probabilitiesOfMoves = hmm.estimateProbabilityDistributionOfNextEmission(hmm.pi);
 
             for(int j = 0; j < probabilitiesOfMoves.length; j++) {
-                // System.err.println(probabilitiesOfMoves[j]);
                 if(probabilitiesOfMoves[j] > bestBirdProbability) {
                     bestBird = i;
                     bestBirdDirection = j + 3;
@@ -57,8 +65,10 @@ class Player {
 
         // This line chooses not to shoot.
         if(bestBird == -1) {
+            System.err.println("Nah we cool...");
             return cDontShoot;
         } else {
+            System.err.println("SHOOT HEEEHH! "+Integer.toString(bestBirdDirection));
             return new Action(bestBird, bestBirdDirection);
         }
 
