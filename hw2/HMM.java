@@ -30,7 +30,7 @@ public class HMM {
         for (int i = 0; i < numberOfStates; ++i) {
             double sum = 0;
             for (int j = 0; j < numberOfStates; ++j) {
-                double chance = Math.random()+1;
+                double chance = Math.random()+10;
                 this.A[i][j] = chance;
                 sum += chance;
             }
@@ -42,7 +42,7 @@ public class HMM {
         for (int i = 0; i < numberOfStates; ++i) {
             double sum = 0;
             for (int j = 0; j < numberOfEmissions; ++j) {
-                double chance = Math.random()+1;
+                double chance = Math.random()+10;
                 this.B[i][j] = chance;
                 sum += chance;
             }
@@ -53,7 +53,7 @@ public class HMM {
 
         double sum = 0;
         for (int i = 0; i < numberOfStates; ++i) {
-            double chance = Math.random()+1;
+            double chance = Math.random()+10;
             this.pi[i] = chance;
             sum += chance;
         }
@@ -219,6 +219,15 @@ public class HMM {
         int iters = 0;
         double logProb;
         boolean finished = false;
+
+        System.err.println("Matrix A:");
+        printMatrix(A);
+        System.err.println("Matrix B:");
+        printMatrix(B);
+        System.err.println("Pi:");
+        printVector(pi);
+        System.err.println("O:");
+        printegerVector(O);
 
         while(!finished && iters < maxIters){
             /* Computation of alpha */
@@ -454,6 +463,13 @@ public class HMM {
                 B[i][j] += hmm.B[i][j];
             }
         }
+    }
+
+    public void printegerVector(int[] vector) {
+        for (int i = 0; i < vector.length; i++) {
+            System.err.print(vector[i] + " ");
+        }
+        System.err.println();
     }
 
     public void printMatrix(double[][] matrix) {
