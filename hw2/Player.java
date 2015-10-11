@@ -28,7 +28,7 @@ class Player {
         int numberOfBirds = pState.getNumBirds();
         int bestBird = -1;
         int bestBirdDirection = -1;
-        double bestBirdProbability = 0.7;
+        double bestBirdProbability = 0.75;
 
         for(int i = 0; i < numberOfBirds; i++) {
             Bird bird = pState.getBird(i);
