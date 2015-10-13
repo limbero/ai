@@ -28,7 +28,7 @@ class Player {
         int numberOfBirds = pState.getNumBirds();
         int bestBird = -1;
         int bestBirdDirection = -1;
-        double bestBirdProbability = 0.75;
+        double bestBirdProbability = 0.8;
 
         for(int i = 0; i < numberOfBirds; i++) {
             Bird bird = pState.getBird(i);
@@ -38,21 +38,25 @@ class Player {
 
             int finsiffra = 10;
 
-            int[] observations = new int[finsiffra];
             int numObservations = bird.getSeqLength();
             if(numObservations < finsiffra) {
                 return cDontShoot;
             }
+            int[] observations = new int[numObservations];
 
-            int k = 0;
-            for(int j = numObservations-finsiffra; j < numObservations; j++) {
-                observations[k] = bird.getObservation(j);
-                k++;
+            // int k = 0;
+            // for(int j = numObservations-finsiffra; j < numObservations; j++) {
+            //     observations[k] = bird.getObservation(j);
+            //     k++;
+            // }
+
+            for(int j = 0; j < numObservations; j++) {
+                observations[j] = bird.getObservation(j);
             }
 
             HMM hmm = new HMM(3, 3);
             hmm.estimateModel(observations);
-            double[] probabilitiesOfMoves = hmm.estimateProbabilityDistributionOfNextEmission(hmm.pi);
+            double[] probabilitiesOfMoves = hmm.estimateProbabilityDistributionOfNextEmission(hmm.A[hmm.A.length-1]);
 
             for(int j = 0; j < probabilitiesOfMoves.length; j++) {
                 if(probabilitiesOfMoves[j] > bestBirdProbability) {

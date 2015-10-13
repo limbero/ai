@@ -7,7 +7,7 @@
 * We recommend that you read the article as an introduction to HMMs.
 */
 public class HMM {
-    static final int maxIters = 10; // Max iterations when estimating a new model.
+    static final int maxIters = 30; // Max iterations when estimating a new model.
 
     final int numberOfStates; // The number of states in the HMM.
     final int numberOfEmissions; // The number of emissions in the HMM.
@@ -30,7 +30,7 @@ public class HMM {
         for (int i = 0; i < numberOfStates; ++i) {
             double sum = 0;
             for (int j = 0; j < numberOfStates; ++j) {
-                double chance = Math.random()+5;
+                double chance = Math.random()+10;
                 this.A[i][j] = chance;
                 sum += chance;
             }
@@ -42,7 +42,7 @@ public class HMM {
         for (int i = 0; i < numberOfStates; ++i) {
             double sum = 0;
             for (int j = 0; j < numberOfEmissions; ++j) {
-                double chance = Math.random()+5;
+                double chance = Math.random()+10;
                 this.B[i][j] = chance;
                 sum += chance;
             }
@@ -53,7 +53,7 @@ public class HMM {
 
         double sum = 0;
         for (int i = 0; i < numberOfStates; ++i) {
-            double chance = Math.random()+5;
+            double chance = Math.random()+10;
             this.pi[i] = chance;
             sum += chance;
         }
